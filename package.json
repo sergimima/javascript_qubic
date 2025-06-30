@@ -1,0 +1,31 @@
+{
+  "name": "vottun-bridge-js-complete",
+  "version": "1.0.0",
+  "description": "Complete JavaScript implementation for VottunBridge with proper Qubic signature",
+  "main": "vottun-bridge-complete.js",
+  "scripts": {
+    "test": "node test-complete.js",
+    "broadcast": "node broadcast-complete.js"
+  },
+  "keywords": [
+    "qubic",
+    "ethereum",
+    "bridge",
+    "blockchain",
+    "vottun",
+    "schnorr",
+    "signature"
+  ],
+  "author": "Vottun",
+  "license": "MIT",
+  "dependencies": {
+    "@noble/curves": "^1.9.2",
+    "@noble/hashes": "^1.8.0",
+    "node-fetch": "^2.7.0",
+    "qubic-ts-library": "^0.1.4"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "type": "commonjs"
+}
