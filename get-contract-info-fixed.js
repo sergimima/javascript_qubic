@@ -279,7 +279,9 @@ class VottunBridgeContractInfoFixed {
                 }
             }
             
-            const orderSize = 115; // 32 + 64 + 8 + 8 + 1 + 1 + 1 = 115 bytes
+            // CORREGIDO: El análisis de bytes muestra que hay un desplazamiento
+            // Los datos están desplazados 5 bytes en la Orden 1
+            const orderSize = 120; // Incrementado de 115 a 120 bytes
             
             console.log("\n🔍 PARSEANDO FIRST ORDERS (solo las primeras 10):");
             const firstOrders = [];
@@ -505,14 +507,23 @@ class VottunBridgeContractInfoFixed {
         const result = await response.json();
         const responseBytes = Buffer.from(result.responseData, 'base64');
         
+        // DEBUG: Mostrar bytes crudos de getOrder
+        console.log(`\n🔍 DEBUG getOrder(${orderId}):`);
+        console.log(`   Total bytes: ${responseBytes.length}`);
+        const hexBytes = Array.from(responseBytes.slice(0, 30)).map(b => b.toString(16).padStart(2, '0')).join(' ');
+        console.log(`   Primeros 30 bytes: ${hexBytes}`);
+        
         // Parse getOrder response - COPIADO DE find-completed-order.js
         const status = responseBytes[0];
+        console.log(`   Status: ${status}`);
         
         if (status === 0) { // Success
-            const originAccount = this.parseId(responseBytes, 1);
-            const destinationAccount = this.parseEthAddress(responseBytes, 33);
-            const orderIdResponse = this.readUint64LE(responseBytes, 97);
-            const amount = this.readUint64LE(responseBytes, 105);
+            // CORREGIDO: Los datos tienen 8 bytes de padding al inicio
+            const baseOffset = 8; // Saltar los primeros 8 bytes de padding
+            const originAccount = this.parseId(responseBytes, baseOffset + 1);
+            const destinationAccount = this.parseEthAddress(responseBytes, baseOffset + 33);
+            const orderIdResponse = this.readUint64LE(responseBytes, baseOffset + 96);
+            const amount = this.readUint64LE(responseBytes, baseOffset + 104);
             const sourceChain = this.readUint32LE(responseBytes, 177);
 
             return {
